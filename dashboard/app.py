@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom High-Readability Light Theme CSS (No cut-offs, crisp dark text)
+# Custom Styling to prevent text clipping and ensure full readability
 st.markdown("""
     <style>
     .stApp {
@@ -21,41 +21,41 @@ st.markdown("""
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     .main-header { font-size: 26px; font-weight: 700; color: #1E3A8A; margin-bottom: 0px; }
-    .sub-header { font-size: 14px; font-weight: 500; color: #475569; margin-bottom: 15px; }
+    .sub-header { font-size: 14px; font-weight: 500; color: #475569; margin-bottom: 20px; }
     
-    /* Clean Card Containers */
+    /* Spacious Metric Containers to prevent text cut-off */
     div[data-testid="metric-container"] { 
         background-color: #FFFFFF; 
         border: 1px solid #CBD5E1; 
-        padding: 12px; 
+        padding: 16px; 
         border-radius: 8px; 
         box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
     }
-    div[data-testid="metric-container"] label { color: #334155 !important; font-size: 13px !important; font-weight: 600 !important; }
-    div[data-testid="metric-container"] div[data-testid="stMetricValue"] { color: #1D4ED8 !important; font-size: 20px !important; font-weight: 700 !important; }
+    div[data-testid="metric-container"] label { color: #334155 !important; font-size: 14px !important; font-weight: 600 !important; }
+    div[data-testid="metric-container"] div[data-testid="stMetricValue"] { color: #1D4ED8 !important; font-size: 24px !important; font-weight: 700 !important; }
     
-    /* Force crisp dark text for all labels and headers */
+    /* Force crisp dark text */
     label, p, span, h1, h2, h3, h4 {
         color: #0F172A !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Top Metrics Bar
-col1, col2, col3, col4 = st.columns(4)
-col1.metric("Network Topology", "IEEE 33-Bus", "Radial Grid")
-col2.metric("Dataset Scale", "1,156,320 Records", "IEEE + DDRE")
-col3.metric("Indexing Engines", "AVL, Treap, B+", "O(log n) Optimal")
-col4.metric("System State", "Active Monitor", "Real-Time Ready")
+# Top Metrics Bar (2 Wider Columns to completely eliminate text truncation)
+mcol1, mcol2 = st.columns(2)
+with mcol1:
+    st.metric("Network Topology & Scale", "33 Buses / 37 Branches", "Dataset: 1,156,320 Records (IEEE + DDRE)")
+with mcol2:
+    st.metric("Engine Performance", "AVL, Treap, B+ Trees", "Dijkstra Optimal Routing Active")
 
 st.markdown("---")
 
 # Navigation Tabs
 tab1, tab2, tab3, tab4 = st.tabs([
-    "🌐 Dynamic Fault & Routing Simulator", 
-    "🌳 Tree Data Structure Index Lookup", 
-    "📈 B+ Tree Time-Series Range Explorer", 
-    "📊 Critical Bus Vulnerability (CBVI)"
+    "🌐 Fault & Dijkstra Routing", 
+    "🌳 Tree Index Lookup", 
+    "📈 B+ Tree Time-Series", 
+    "📊 CBVI Vulnerability"
 ])
 
 # =====================================================================
@@ -63,16 +63,16 @@ tab1, tab2, tab3, tab4 = st.tabs([
 # =====================================================================
 with tab1:
     st.markdown('<p class="main-header">⚡ IEEE 33-Bus Fault Simulation & Dijkstra Routing</p>', unsafe_allow_html=True)
-    st.markdown('<p class="sub-header">Select your parameters below to dynamically compute the shortest restoration path.</p>', unsafe_allow_html=True)
+    st.markdown('<p class="sub-header">Use the number steppers below to select Source and Terminal buses without any text clipping.</p>', unsafe_allow_html=True)
 
-    # Clear, dedicated control card for Tab 1
+    # Spacious control container
     with st.container():
         st.markdown("#### 🎛️ Tab 1 Controls: Routing Parameters")
         c1, c2 = st.columns(2)
         with c1:
-            source_bus = st.selectbox("Select Source Substation Bus:", options=list(range(1, 34)), index=0, key="t1_src")
+            source_bus = st.number_input("Select Source Substation Bus:", min_value=1, max_value=33, value=1, step=1, key="t1_src")
         with c2:
-            target_bus = st.selectbox("Select Target Terminal Bus:", options=list(range(1, 34)), index=32, key="t1_tgt")
+            target_bus = st.number_input("Select Target Terminal Bus:", min_value=1, max_value=33, value=33, step=1, key="t1_tgt")
     
     st.markdown("---")
 
@@ -126,7 +126,7 @@ with tab1:
 
         fig_net = go.Figure(data=[edge_trace, node_trace],
                      layout=go.Layout(title=f'Pathfinding Route: Bus {source_bus} ➔ Bus {target_bus}', showlegend=False,
-                        hovermode='closest', margin=dict(b=10,l=5,r=5,t=30), height=420,
+                        hovermode='closest', margin=dict(b=10,l=5,r=5,t=30), height=400,
                         paper_bgcolor='white', plot_bgcolor='white', font=dict(color='#0F172A'),
                         xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                         yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
@@ -144,17 +144,17 @@ with tab1:
 # =====================================================================
 with tab2:
     st.markdown('<p class="main-header">🌳 Dynamic Tree Index Point Lookup (AVL vs Treap)</p>', unsafe_allow_html=True)
-    st.markdown('<p class="sub-header">Evaluate O(log n) worst-case point lookup speeds over structured node records.</p>', unsafe_allow_html=True)
+    st.markdown('<p class="sub-header">Evaluate O(log n) point lookup speeds using number steppers.</p>', unsafe_allow_html=True)
 
     with st.container():
-        st.markdown("#### 🎛️ Tab 2 Controls: Index Point Lookup")
-        search_bus_id = st.selectbox("Select Bus ID for Point Lookup:", options=list(range(1, 34)), index=14, key="t2_bus")
+        st.markdown("#### 🎛️ Index Lookup Controls")
+        search_bus_id = st.number_input("Enter Bus ID for Lookup:", min_value=1, max_value=33, value=15, step=1, key="t2_bus")
     
     st.markdown("---")
 
     col_t1, col_t2, col_t3 = st.columns(3)
-    col_t1.metric("AVL Tree Search Time", f"{np.random.uniform(0.25, 0.38):.3f} ms", "O(log n) Deterministic")
-    col_t2.metric("Treap Search Time", f"{np.random.uniform(0.35, 0.48):.3f} ms", "Randomized Priority")
+    col_t1.metric("AVL Tree Search Time", f"{np.random.uniform(0.25, 0.38):.3f} ms", "O(log n)")
+    col_t2.metric("Treap Search Time", f"{np.random.uniform(0.35, 0.48):.3f} ms", "Randomized")
     col_t3.metric("Index Match Status", "SUCCESS", f"Bus {search_bus_id} Verified")
 
     simulated_bus_record = pd.DataFrame({
@@ -171,7 +171,7 @@ with tab3:
     st.markdown('<p class="sub-header">Perform leaf-node linked list range scans bypassing full table scans.</p>', unsafe_allow_html=True)
 
     with st.container():
-        st.markdown("#### 🎛️ Tab 3 Controls: Temporal Range Slicer")
+        st.markdown("#### 🎛️ Temporal Range Slicer")
         time_range = st.slider("Select Time-Window Slicer (Timestamp IDs):", 1000, 1100, (1000, 1015), key="t3_time")
     
     st.markdown("---")
@@ -189,11 +189,11 @@ with tab3:
     
     col_c1, col_c2 = st.columns([1, 2])
     with col_c1:
-        st.dataframe(df_time, use_container_width=True, height=350, hide_index=True)
+        st.dataframe(df_time, use_container_width=True, height=340, hide_index=True)
     with col_c2:
         fig_time = px.line(df_time, x="Timestamp_ID", y=["Active_Load_kW", "PV_Generation_kW", "Net_Demand_kW"], 
                            markers=True, title=f"B+ Tree Index Scan Range [{time_range[0]} to {time_range[1]}]")
-        fig_time.update_layout(paper_bgcolor='white', plot_bgcolor='white', font=dict(color='#0F172A'), height=350, margin=dict(t=30, b=10, l=10, r=10))
+        fig_time.update_layout(paper_bgcolor='white', plot_bgcolor='white', font=dict(color='#0F172A'), height=340, margin=dict(t=30, b=10, l=10, r=10))
         st.plotly_chart(fig_time, use_container_width=True)
 
 # =====================================================================
@@ -204,7 +204,7 @@ with tab4:
     st.latex(r"CBVI = w_1(\text{Load}) + w_2(\text{Voltage Drop}) + w_3(\text{Renewable Variability})")
 
     with st.container():
-        st.markdown("#### 🎛️ Tab 4 Controls: CBVI Weight Sliders")
+        st.markdown("#### 🎛️ CBVI Weight Sliders")
         cw1, cw2, cw3 = st.columns(3)
         with cw1:
             w1 = st.slider("Weight Load ($w_1$):", 0.0, 1.0, 0.4, 0.05, key="w1_slider")
@@ -232,13 +232,13 @@ with tab4:
     
     col_d1, col_d2 = st.columns([1, 2])
     with col_d1:
-        st.dataframe(df_cbvi, use_container_width=True, height=350, hide_index=True)
+        st.dataframe(df_cbvi, use_container_width=True, height=340, hide_index=True)
     with col_d2:
         fig_cbvi = px.bar(df_cbvi, x="Bus ID", y="Dynamic CBVI Score", color="Dynamic CBVI Score", 
                           color_continuous_scale="Plasma", title="Dynamic CBVI Rankings", text="Dynamic CBVI Score")
-        fig_cbvi.update_layout(paper_bgcolor='white', plot_bgcolor='white', font=dict(color='#0F172A'), height=350, margin=dict(t=30, b=10, l=10, r=10))
+        fig_cbvi.update_layout(paper_bgcolor='white', plot_bgcolor='white', font=dict(color='#0F172A'), height=340, margin=dict(t=30, b=10, l=10, r=10))
         st.plotly_chart(fig_cbvi, use_container_width=True)
 
 # Footer
 st.markdown("---")
-st.markdown("<p style='text-align: center; color: #475569;'>M.Tech ADSA Project Engine | High-Readability Clean Enterprise Layout</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #475569;'>M.Tech ADSA Project Engine | Clean High-Readability Layout</p>", unsafe_allow_html=True)
