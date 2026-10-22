@@ -12,38 +12,35 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom Dark Mode & Button Styling
+# Custom Dark Mode, Typography, & Metric Card Enhancement
 st.markdown("""
     <style>
-    /* Global Dark Background & Text */
+    /* Global Dark Background & Modern Font Stack */
     .stApp {
         background-color: #0E1117;
         color: #FAFAFA;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
-    .main-header { font-size: 28px; font-weight: bold; color: #60A5FA; text-align: center; }
-    .sub-header { font-size: 16px; color: #9CA3AF; text-align: center; margin-bottom: 25px; }
     
-    /* Metric Cards Styling */
+    .main-header { font-size: 28px; font-weight: 700; color: #60A5FA; text-align: center; }
+    .sub-header { font-size: 15px; color: #9CA3AF; text-align: center; margin-bottom: 25px; }
+    
+    /* Make Metric Cards Stand Out Clearly in Dark Mode */
     div[data-testid="metric-container"] { 
-        background-color: #1F2937; 
-        border: 1px solid #374151; 
-        padding: 12px; 
+        background-color: #161B22; 
+        border: 1px solid #30363D; 
+        padding: 14px; 
         border-radius: 8px; 
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3); 
+        box-shadow: 0 4px 6px rgba(0,0,0,0.4); 
     }
-    
-    /* Button & Interactive Element Styling */
-    .stButton>button { 
-        background-color: #3B82F6; 
-        color: white; 
-        border-radius: 6px; 
-        font-weight: bold; 
-        border: none; 
-        padding: 0.5rem 1rem; 
+    div[data-testid="metric-container"] label {
+        color: #8B949E !important;
+        font-size: 14px !important;
     }
-    .stButton>button:hover { 
-        background-color: #2563EB; 
-        color: white; 
+    div[data-testid="metric-container"] div[data-testid="stMetricValue"] {
+        color: #58A6FF !important;
+        font-size: 24px !important;
+        font-weight: 700 !important;
     }
     </style>
 """, unsafe_allow_html=True)
