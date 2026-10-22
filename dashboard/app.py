@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom Styling for full readability and zero text clipping
+# Custom Styling for perfect font scaling, hierarchy, and zero clipping
 st.markdown("""
     <style>
     .stApp {
@@ -20,8 +20,9 @@ st.markdown("""
         color: #0F172A;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
-    .main-header { font-size: 28px; font-weight: 700; color: #1E3A8A; text-align: center; margin-bottom: 2px; }
-    .sub-header { font-size: 15px; font-weight: 500; color: #475569; text-align: center; margin-bottom: 20px; }
+    /* Large, prominent project title */
+    .main-header { font-size: 34px; font-weight: 800; color: #1E3A8A; text-align: center; margin-bottom: 4px; }
+    .sub-header { font-size: 16px; font-weight: 600; color: #475569; text-align: center; margin-bottom: 25px; }
     
     /* Spacious Metric Containers */
     div[data-testid="metric-container"] { 
@@ -41,11 +42,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 1. RESTORED PROJECT TITLE & SUBHEADER
+# Prominent Project Header Hierarchy
 st.markdown('<p class="main-header">⚡ Intelligent Smart Grid Decision Support System</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-header">M.Tech ADSA Research Project | IEEE 33-Bus + DDRE-33 Merged Engine (1.15M+ Records)</p>', unsafe_allow_html=True)
 
-# Top Metrics Bar (2 Wide Columns to prevent text cut-off)
+# Top Metrics Bar (2 Wide Columns)
 mcol1, mcol2 = st.columns(2)
 with mcol1:
     st.metric("Network Topology & Scale", "33 Buses / 37 Branches", "Dataset: 1,156,320 Records (IEEE + DDRE)")
@@ -67,7 +68,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
 # =====================================================================
 with tab1:
     st.markdown("### ⚡ IEEE 33-Bus Fault Simulation & Dijkstra Routing")
-    st.markdown("Use the number steppers below to select Source and Terminal buses. All analytics update dynamically based on your inputs.")
+    st.markdown("Use the number steppers below to select Source and Terminal buses. All analytics update dynamically.")
 
     # Spacious control container
     with st.container():
@@ -95,7 +96,6 @@ with tab1:
         computed_path = [source_bus]
         path_impedance = 0.0
 
-    # 2. DYNAMICALLY CHANGE STATUS BASED ON USER INPUT
     path_hops = len(computed_path) - 1
     if source_bus == target_bus:
         isolation_status = "⚠️ Invalid (Same Bus)"
@@ -104,7 +104,8 @@ with tab1:
     else:
         isolation_status = "✅ Optimal / Stable Route"
 
-    col_a, col_b = st.columns([3, 2])
+    # Widened right column [2, 3] so status text never clips
+    col_a, col_b = st.columns([2, 3])
     with col_a:
         pos = nx.spring_layout(G, seed=42)
         edge_x, edge_y = [], []
@@ -139,7 +140,7 @@ with tab1:
 
         fig_net = go.Figure(data=[edge_trace, node_trace],
                      layout=go.Layout(title=f'Pathfinding Route: Bus {source_bus} ➔ Bus {target_bus}', showlegend=False,
-                        hovermode='closest', margin=dict(b=10,l=5,r=5,t=30), height=400,
+                        hovermode='closest', margin=dict(b=10,l=5,r=5,t=30), height=420,
                         paper_bgcolor='white', plot_bgcolor='white', font=dict(color='#0F172A'),
                         xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                         yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
@@ -150,7 +151,7 @@ with tab1:
         st.success(f"**Route:** {' ➔ '.join(map(str, computed_path))}")
         st.metric("Total Path Hops", path_hops)
         st.metric("Estimated Impedance", f"{path_impedance:.2f} Ω")
-        st.metric("Isolation Status", isolation_status)  # Changes dynamically with user input!
+        st.metric("Isolation Status", isolation_status)
 
 # =====================================================================
 # TAB 2: TREE DATA STRUCTURE INDEX LOOKUP
@@ -248,7 +249,7 @@ with tab4:
         st.dataframe(df_cbvi, use_container_width=True, height=340, hide_index=True)
     with col_d2:
         fig_cbvi = px.bar(df_cbvi, x="Bus ID", y="Dynamic CBVI Score", color="Dynamic CBVI Score", 
-                          color_continuous_scale="Plasma", title="Dynamic CBVI Rankings", text="Dynamic CBVI Score")
+                          color_continuous_scale="Plasma", title="Dynamically Recalculated CBVI Rankings", text="Dynamic CBVI Score")
         fig_cbvi.update_layout(paper_bgcolor='white', plot_bgcolor='white', font=dict(color='#0F172A'), height=340, margin=dict(t=30, b=10, l=10, r=10))
         st.plotly_chart(fig_cbvi, use_container_width=True)
 
