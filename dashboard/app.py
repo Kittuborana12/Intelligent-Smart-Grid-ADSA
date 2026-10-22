@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom Styling to prevent text clipping and ensure full readability
+# Custom Styling for full readability and zero text clipping
 st.markdown("""
     <style>
     .stApp {
@@ -20,10 +20,10 @@ st.markdown("""
         color: #0F172A;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
-    .main-header { font-size: 26px; font-weight: 700; color: #1E3A8A; margin-bottom: 0px; }
-    .sub-header { font-size: 14px; font-weight: 500; color: #475569; margin-bottom: 20px; }
+    .main-header { font-size: 28px; font-weight: 700; color: #1E3A8A; text-align: center; margin-bottom: 2px; }
+    .sub-header { font-size: 15px; font-weight: 500; color: #475569; text-align: center; margin-bottom: 20px; }
     
-    /* Spacious Metric Containers to prevent text cut-off */
+    /* Spacious Metric Containers */
     div[data-testid="metric-container"] { 
         background-color: #FFFFFF; 
         border: 1px solid #CBD5E1; 
@@ -41,7 +41,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Top Metrics Bar (2 Wider Columns to completely eliminate text truncation)
+# 1. RESTORED PROJECT TITLE & SUBHEADER
+st.markdown('<p class="main-header">⚡ Intelligent Smart Grid Decision Support System</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-header">M.Tech ADSA Research Project | IEEE 33-Bus + DDRE-33 Merged Engine (1.15M+ Records)</p>', unsafe_allow_html=True)
+
+# Top Metrics Bar (2 Wide Columns to prevent text cut-off)
 mcol1, mcol2 = st.columns(2)
 with mcol1:
     st.metric("Network Topology & Scale", "33 Buses / 37 Branches", "Dataset: 1,156,320 Records (IEEE + DDRE)")
@@ -62,8 +66,8 @@ tab1, tab2, tab3, tab4 = st.tabs([
 # TAB 1: DYNAMIC FAULT & ROUTING SIMULATOR
 # =====================================================================
 with tab1:
-    st.markdown('<p class="main-header">⚡ IEEE 33-Bus Fault Simulation & Dijkstra Routing</p>', unsafe_allow_html=True)
-    st.markdown('<p class="sub-header">Use the number steppers below to select Source and Terminal buses without any text clipping.</p>', unsafe_allow_html=True)
+    st.markdown("### ⚡ IEEE 33-Bus Fault Simulation & Dijkstra Routing")
+    st.markdown("Use the number steppers below to select Source and Terminal buses. All analytics update dynamically based on your inputs.")
 
     # Spacious control container
     with st.container():
@@ -90,6 +94,15 @@ with tab1:
     except Exception:
         computed_path = [source_bus]
         path_impedance = 0.0
+
+    # 2. DYNAMICALLY CHANGE STATUS BASED ON USER INPUT
+    path_hops = len(computed_path) - 1
+    if source_bus == target_bus:
+        isolation_status = "⚠️ Invalid (Same Bus)"
+    elif path_hops > 8 or path_impedance > 35.0:
+        isolation_status = "⚠️ High Impedance / Vulnerable"
+    else:
+        isolation_status = "✅ Optimal / Stable Route"
 
     col_a, col_b = st.columns([3, 2])
     with col_a:
@@ -133,18 +146,18 @@ with tab1:
         st.plotly_chart(fig_net, use_container_width=True)
 
     with col_b:
-        st.markdown(f"### ⚙️ Simulation Analytics")
+        st.markdown(f"### ⚙️ Dynamic Simulation Analytics")
         st.success(f"**Route:** {' ➔ '.join(map(str, computed_path))}")
-        st.metric("Total Path Hops", len(computed_path) - 1)
+        st.metric("Total Path Hops", path_hops)
         st.metric("Estimated Impedance", f"{path_impedance:.2f} Ω")
-        st.metric("Isolation Status", "Optimal / Stable")
+        st.metric("Isolation Status", isolation_status)  # Changes dynamically with user input!
 
 # =====================================================================
 # TAB 2: TREE DATA STRUCTURE INDEX LOOKUP
 # =====================================================================
 with tab2:
-    st.markdown('<p class="main-header">🌳 Dynamic Tree Index Point Lookup (AVL vs Treap)</p>', unsafe_allow_html=True)
-    st.markdown('<p class="sub-header">Evaluate O(log n) point lookup speeds using number steppers.</p>', unsafe_allow_html=True)
+    st.markdown("### 🌳 Dynamic Tree Index Point Lookup (AVL vs Treap)")
+    st.markdown("Evaluate O(log n) point lookup speeds using number steppers.")
 
     with st.container():
         st.markdown("#### 🎛️ Index Lookup Controls")
@@ -167,8 +180,8 @@ with tab2:
 # TAB 3: B+ TREE TIME-SERIES RANGE EXPLORER
 # =====================================================================
 with tab3:
-    st.markdown('<p class="main-header">📈 B+ Tree Time-Series Range Query Explorer [1.15M Records]</p>', unsafe_allow_html=True)
-    st.markdown('<p class="sub-header">Perform leaf-node linked list range scans bypassing full table scans.</p>', unsafe_allow_html=True)
+    st.markdown("### 📈 B+ Tree Time-Series Range Query Explorer [1.15M Records]")
+    st.markdown("Perform leaf-node linked list range scans bypassing full table scans.")
 
     with st.container():
         st.markdown("#### 🎛️ Temporal Range Slicer")
@@ -200,7 +213,7 @@ with tab3:
 # TAB 4: CRITICAL BUS VULNERABILITY INDEX (CBVI)
 # =====================================================================
 with tab4:
-    st.markdown('<p class="main-header">📊 Critical Bus Vulnerability Index (CBVI)</p>', unsafe_allow_html=True)
+    st.markdown("### 📊 Critical Bus Vulnerability Index (CBVI)")
     st.latex(r"CBVI = w_1(\text{Load}) + w_2(\text{Voltage Drop}) + w_3(\text{Renewable Variability})")
 
     with st.container():
