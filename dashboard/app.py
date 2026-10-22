@@ -12,35 +12,41 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom Dark Mode, Typography, & Metric Card Enhancement
+# Custom High-Readability Styling (Clean Light Enterprise Mode)
 st.markdown("""
     <style>
-    /* Global Dark Background & Modern Font Stack */
+    /* Global Light Background & High-Contrast Dark Text */
     .stApp {
-        background-color: #0E1117;
-        color: #FAFAFA;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        background-color: #F8FAFC;
+        color: #0F172A;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     
-    .main-header { font-size: 28px; font-weight: 700; color: #60A5FA; text-align: center; }
-    .sub-header { font-size: 15px; color: #9CA3AF; text-align: center; margin-bottom: 25px; }
+    .main-header { font-size: 28px; font-weight: 700; color: #1E3A8A; text-align: center; }
+    .sub-header { font-size: 15px; font-weight: 500; color: #475569; text-align: center; margin-bottom: 25px; }
     
-    /* Make Metric Cards Stand Out Clearly in Dark Mode */
+    /* Highly Visible Metric Cards */
     div[data-testid="metric-container"] { 
-        background-color: #161B22; 
-        border: 1px solid #30363D; 
+        background-color: #FFFFFF; 
+        border: 1px solid #CBD5E1; 
         padding: 14px; 
         border-radius: 8px; 
-        box-shadow: 0 4px 6px rgba(0,0,0,0.4); 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
     }
     div[data-testid="metric-container"] label {
-        color: #8B949E !important;
-        font-size: 14px !important;
+        color: #334155 !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
     }
     div[data-testid="metric-container"] div[data-testid="stMetricValue"] {
-        color: #58A6FF !important;
-        font-size: 24px !important;
+        color: #1D4ED8 !important;
+        font-size: 22px !important;
         font-weight: 700 !important;
+    }
+    
+    /* Input Labels and Text Readability */
+    label, p, span {
+        color: #0F172A !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -104,7 +110,7 @@ with tab1:
             edge_x.extend([x0, x1, None])
             edge_y.extend([y0, y1, None])
 
-        edge_trace = go.Scatter(x=edge_x, y=edge_y, line=dict(width=1.5, color='#4B5563'), hoverinfo='none', mode='lines')
+        edge_trace = go.Scatter(x=edge_x, y=edge_y, line=dict(width=1.5, color='#94A3B8'), hoverinfo='none', mode='lines')
 
         node_x, node_y, node_color = [], [], []
         for node in G.nodes():
@@ -123,15 +129,15 @@ with tab1:
         node_trace = go.Scatter(
             x=node_x, y=node_y, mode='markers+text',
             text=[str(n) for n in G.nodes()], textposition="top center",
-            textfont=dict(color='white'),
+            textfont=dict(color='black', weight='bold'),
             hoverinfo='text', marker=dict(showscale=False, color=node_color, size=18, line_width=2, line_color='white')
         )
 
         fig_net = go.Figure(data=[edge_trace, node_trace],
                      layout=go.Layout(title=f'Pathfinding Route from Bus {source_bus} to Bus {target_bus}', showlegend=False,
                         hovermode='closest', margin=dict(b=20,l=5,r=5,t=40),
-                        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                        font=dict(color='white'),
+                        paper_bgcolor='white', plot_bgcolor='white',
+                        font=dict(color='#0F172A'),
                         xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                         yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
         st.plotly_chart(fig_net, use_container_width=True)
@@ -185,7 +191,7 @@ with tab3:
     
     fig_time = px.line(df_time, x="Timestamp_ID", y=["Active_Load_kW", "PV_Generation_kW", "Net_Demand_kW"], 
                        markers=True, title=f"B+ Tree Index Scan Range [{time_range[0]} to {time_range[1]}]")
-    fig_time.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='white'))
+    fig_time.update_layout(paper_bgcolor='white', plot_bgcolor='white', font=dict(color='#0F172A'))
     st.plotly_chart(fig_time, use_container_width=True)
 
 # =====================================================================
@@ -221,10 +227,10 @@ with tab4:
     st.dataframe(df_cbvi, use_container_width=True, hide_index=True)
     
     fig_cbvi = px.bar(df_cbvi, x="Bus ID", y="Dynamic CBVI Score", color="Dynamic CBVI Score", 
-                      color_continuous_scale="Plasma", title="Dynamically Recalculated CBVI Rankings", text="Dynamic CBVI Score")
-    fig_cbvi.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='white'))
+                      color_continuous_scale="Viridis", title="Dynamically Recalculated CBVI Rankings", text="Dynamic CBVI Score")
+    fig_cbvi.update_layout(paper_bgcolor='white', plot_bgcolor='white', font=dict(color='#0F172A'))
     st.plotly_chart(fig_cbvi, use_container_width=True)
 
 # Footer
 st.markdown("---")
-st.markdown("<p style='text-align: center; color: #9CA3AF;'>M.Tech ADSA Project Engine | High-Performance Dark Dashboard</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #475569;'>M.Tech ADSA Project Engine | High-Readability Enterprise Dashboard</p>", unsafe_allow_html=True)
