@@ -1,0 +1,8 @@
+smart_grid.exe
+*.exe
+*.o
+*.obj
+build/
+.vscode/
+__pycache__/
+.streamlit/
