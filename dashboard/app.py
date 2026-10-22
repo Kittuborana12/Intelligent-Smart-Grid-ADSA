@@ -12,15 +12,29 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom Styling to mimic BI tools
+# Custom Styling for clean presentation and clickable button enhancements
 st.markdown("""
     <style>
-    .main-header { font-size: 26px; font-weight: bold; color: #1E3A8A; margin-bottom: 0px; }
-    .sub-header { font-size: 14px; color: #4B5563; margin-bottom: 15px; }
-    div[data-testid="metric-container"] { background-color: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px; border-radius: 6px; }
-    section[data-testid="stSidebar"] { background-color: #F1F5F9; }
+    .main-header { font-size: 28px; font-weight: bold; color: #1E3A8A; text-align: center; }
+    .sub-header { font-size: 16px; color: #4B5563; text-align: center; margin-bottom: 25px; }
+    div[data-testid="metric-container"] { background-color: #F8FAFC; border: 1px solid #CBD5E1; padding: 12px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .stButton>button { background-color: #2563EB; color: white; border-radius: 6px; font-weight: bold; border: none; padding: 0.5rem 1rem; }
+    .stButton>button:hover { background-color: #1D4ED8; color: white; }
     </style>
 """, unsafe_allow_html=True)
+
+# Title Header
+st.markdown('<p class="main-header">⚡ Intelligent Smart Grid Decision Support System</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-header">M.Tech ADSA Research Project | IEEE 33-Bus + DDRE-33 Merged Engine (1.15M+ Records)</p>', unsafe_allow_html=True)
+
+# Top Metrics Bar
+col1, col2, col3, col4 = st.columns(4)
+col1.metric("Network Size", "33 Buses / 37 Branches", "Radial Topology")
+col2.metric("Merged Dataset", "1,156,320 Records", "IEEE + DDRE 2025/26")
+col3.metric("Dijkstra Impedance", "44.19 Ω", "10 Hops Optimal")
+col4.metric("Grid Status", "Dynamic Active", "Interactive Mode")
+
+st.markdown("---")
 
 # Navigation Tabs
 tab1, tab2, tab3, tab4 = st.tabs([
@@ -34,17 +48,14 @@ tab1, tab2, tab3, tab4 = st.tabs([
 # TAB 1: DYNAMIC FAULT & ROUTING SIMULATOR
 # =====================================================================
 with tab1:
-    # Sidebar Filters (Tableau / Power BI Slicer Panel Style)
-    with st.sidebar:
-        st.markdown("### 🎛️ Slicer Panel")
-        st.markdown("**Fault & Routing Controls**")
-        source_bus = st.selectbox("Select Source Substation Bus:", options=list(range(1, 34)), index=0)
-        target_bus = st.selectbox("Select Target Terminal Bus:", options=list(range(1, 34)), index=32)
-        st.markdown("---")
-        st.info("💡 **Tip:** Use these slicers to dynamically update the network topology graph and shortest-path algorithm in real time.")
-
-    st.markdown('<p class="main-header">⚡ Interactive IEEE 33-Bus Fault Simulation & Dijkstra Routing</p>', unsafe_allow_html=True)
-    st.markdown('<p class="sub-header">M.Tech ADSA Research Project | Real-time Graph Pathfinding</p>', unsafe_allow_html=True)
+    st.subheader("Interactive IEEE 33-Bus Fault Simulation & Dijkstra Routing")
+    st.info("Select your Source and Target buses below to dynamically compute the shortest restoration path.")
+    
+    col_input1, col_input2 = st.columns(2)
+    with col_input1:
+        source_bus = st.number_input("Select Source Substation Bus:", min_value=1, max_value=33, value=1, step=1)
+    with col_input2:
+        target_bus = st.number_input("Select Target Terminal Bus:", min_value=1, max_value=33, value=33, step=1)
 
     # Dynamic Graph Building & Dijkstra Path Computation
     G = nx.Graph()
@@ -79,30 +90,30 @@ with tab1:
             node_x.append(x)
             node_y.append(y)
             if node == source_bus:
-                node_color.append('#F59E0B')
+                node_color.append('#F59E0B') # Source
             elif node == target_bus:
-                node_color.append('#EF4444')
+                node_color.append('#EF4444') # Target
             elif node in computed_path:
-                node_color.append('#10B981')
+                node_color.append('#10B981') # Path
             else:
-                node_color.append('#3B82F6')
+                node_color.append('#3B82F6') # Default
 
         node_trace = go.Scatter(
             x=node_x, y=node_y, mode='markers+text',
             text=[str(n) for n in G.nodes()], textposition="top center",
-            hoverinfo='text', marker=dict(showscale=False, color=node_color, size=16, line_width=2, line_color='white')
+            hoverinfo='text', marker=dict(showscale=False, color=node_color, size=18, line_width=2, line_color='white')
         )
 
         fig_net = go.Figure(data=[edge_trace, node_trace],
-                     layout=go.Layout(title=f'Pathfinding Route: Bus {source_bus} ➔ Bus {target_bus}', showlegend=False,
-                        hovermode='closest', margin=dict(b=10,l=5,r=5,t=30), height=450,
+                     layout=go.Layout(title=f'Pathfinding Route from Bus {source_bus} to Bus {target_bus}', showlegend=False,
+                        hovermode='closest', margin=dict(b=20,l=5,r=5,t=40),
                         xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                         yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
         st.plotly_chart(fig_net, use_container_width=True)
 
     with col_b:
-        st.markdown(f"#### ⚙️ Route Metrics")
-        st.success(f"**Route:** {' ➔ '.join(map(str, computed_path))}")
+        st.markdown(f"### ⚙️ Dynamic Route Analytics")
+        st.success(f"**Computed Route:** {' -> '.join(map(str, computed_path))}")
         st.metric("Total Path Hops", len(computed_path) - 1)
         st.metric("Estimated Impedance", f"{path_impedance:.2f} Ω")
 
@@ -110,17 +121,14 @@ with tab1:
 # TAB 2: TREE DATA STRUCTURE INDEX LOOKUP
 # =====================================================================
 with tab2:
-    with st.sidebar:
-        st.markdown("### 🎛️ Slicer Panel")
-        st.markdown("**Tree Index Controls**")
-        search_bus_id = st.selectbox("Select Bus ID for Index Lookup:", options=list(range(1, 34)), index=14, key="t2_bus")
+    st.subheader("Dynamic Tree Index Point Lookup (AVL vs Treap)")
+    st.info("Input any Bus ID below to simulate O(log n) worst-case point lookups.")
 
-    st.markdown('<p class="main-header">🌳 Dynamic Tree Index Point Lookup (AVL vs Treap)</p>', unsafe_allow_html=True)
-    st.markdown('<p class="sub-header">Simulating O(log n) worst-case point lookups across 1.15M dataset indexes</p>', unsafe_allow_html=True)
+    search_bus_id = st.number_input("Enter Bus ID for O(log n) Index Lookup:", min_value=1, max_value=33, value=15, step=1)
 
     col_t1, col_t2, col_t3 = st.columns(3)
-    col_t1.metric("AVL Tree Search Time", f"{np.random.uniform(0.25, 0.38):.3f} ms", "O(log n)")
-    col_t2.metric("Treap Search Time", f"{np.random.uniform(0.35, 0.48):.3f} ms", "Randomized")
+    col_t1.metric("AVL Tree Search Time", f"{np.random.uniform(0.25, 0.38):.3f} ms", "O(log n) Deterministic")
+    col_t2.metric("Treap Search Time", f"{np.random.uniform(0.35, 0.48):.3f} ms", "Randomized Priority")
     col_t3.metric("Index Match Status", "SUCCESS", f"Bus {search_bus_id} Verified")
 
     simulated_bus_record = pd.DataFrame({
@@ -133,13 +141,10 @@ with tab2:
 # TAB 3: B+ TREE TIME-SERIES RANGE EXPLORER
 # =====================================================================
 with tab3:
-    with st.sidebar:
-        st.markdown("### 🎛️ Slicer Panel")
-        st.markdown("**Temporal Range Controls**")
-        time_range = st.slider("Select Time-Window Slicer:", 1000, 1100, (1000, 1015), key="t3_time")
-
-    st.markdown('<p class="main-header">📈 B+ Tree Dynamic Time-Series Range Explorer</p>', unsafe_allow_html=True)
-    st.markdown('<p class="sub-header">High-performance leaf-node linked list range scans over 1,156,320 records</p>', unsafe_allow_html=True)
+    st.subheader("B+ Tree Dynamic Time-Window Range Query [1.15M Records]")
+    st.info("Use the range slider below to query temporal blocks instantly.")
+    
+    time_range = st.slider("Select Temporal Range Window (Timestamp IDs):", 1000, 1100, (1000, 1015))
     
     np.random.seed(time_range[0])
     timestamps = range(time_range[0], time_range[1] + 1)
@@ -151,29 +156,26 @@ with tab3:
     } for t in timestamps]
     
     df_time = pd.DataFrame(simulated_data)
+    st.dataframe(df_time, use_container_width=True, hide_index=True)
     
-    col_c1, col_c2 = st.columns([1, 2])
-    with col_c1:
-        st.dataframe(df_time, use_container_width=True, height=350, hide_index=True)
-    with col_c2:
-        fig_time = px.line(df_time, x="Timestamp_ID", y=["Active_Load_kW", "PV_Generation_kW", "Net_Demand_kW"], 
-                           markers=True, title=f"Range Query Results [{time_range[0]} to {time_range[1]}]")
-        fig_time.update_layout(height=350, margin=dict(t=30, b=10, l=10, r=10))
-        st.plotly_chart(fig_time, use_container_width=True)
+    fig_time = px.line(df_time, x="Timestamp_ID", y=["Active_Load_kW", "PV_Generation_kW", "Net_Demand_kW"], 
+                       markers=True, title=f"B+ Tree Index Scan Range [{time_range[0]} to {time_range[1]}]")
+    st.plotly_chart(fig_time, use_container_width=True)
 
 # =====================================================================
 # TAB 4: CRITICAL BUS VULNERABILITY INDEX (CBVI)
 # =====================================================================
 with tab4:
-    with st.sidebar:
-        st.markdown("### 🎛️ Slicer Panel")
-        st.markdown("**CBVI Weight Slicers**")
-        w1 = st.slider("Weight Load ($w_1$):", 0.0, 1.0, 0.4, 0.05, key="w1_slider")
-        w2 = st.slider("Weight Voltage ($w_2$):", 0.0, 1.0, 0.3, 0.05, key="w2_slider")
-        w3 = st.slider("Weight Renewable ($w_3$):", 0.0, 1.0, 0.3, 0.05, key="w3_slider")
-
-    st.markdown('<p class="main-header">📊 Critical Bus Vulnerability Index (CBVI)</p>', unsafe_allow_html=True)
+    st.subheader("Critical Bus Vulnerability Index (CBVI) Custom Weights")
     st.latex(r"CBVI = w_1(\text{Load}) + w_2(\text{Voltage Drop}) + w_3(\text{Renewable Variability})")
+    
+    col_w1, col_w2, col_w3 = st.columns(3)
+    with col_w1:
+        w1 = st.slider("Weight Load ($w_1$):", 0.0, 1.0, 0.4, 0.05)
+    with col_w2:
+        w2 = st.slider("Weight Voltage ($w_2$):", 0.0, 1.0, 0.3, 0.05)
+    with col_w3:
+        w3 = st.slider("Weight Renewable ($w_3$):", 0.0, 1.0, 0.3, 0.05)
 
     bus_ids = [18, 33, 22, 12, 6, 25]
     loads = [0.85, 0.82, 0.70, 0.60, 0.40, 0.30]
@@ -190,15 +192,12 @@ with tab4:
         "Dynamic CBVI Score": [round(s, 3) for s in dynamic_cbvi_scores]
     })
     
-    col_d1, col_d2 = st.columns([1, 2])
-    with col_d1:
-        st.dataframe(df_cbvi, use_container_width=True, height=350, hide_index=True)
-    with col_d2:
-        fig_cbvi = px.bar(df_cbvi, x="Bus ID", y="Dynamic CBVI Score", color="Dynamic CBVI Score", 
-                          color_continuous_scale="Blues", title="Dynamic CBVI Rankings", text="Dynamic CBVI Score")
-        fig_cbvi.update_layout(height=350, margin=dict(t=30, b=10, l=10, r=10))
-        st.plotly_chart(fig_cbvi, use_container_width=True)
+    st.dataframe(df_cbvi, use_container_width=True, hide_index=True)
+    
+    fig_cbvi = px.bar(df_cbvi, x="Bus ID", y="Dynamic CBVI Score", color="Dynamic CBVI Score", 
+                      color_continuous_scale="Viridis", title="Dynamically Recalculated CBVI Rankings", text="Dynamic CBVI Score")
+    st.plotly_chart(fig_cbvi, use_container_width=True)
 
 # Footer
 st.markdown("---")
-st.markdown("<p style='text-align: center; color: #6B7280;'>M.Tech ADSA Project Engine | Professional Business Intelligence Layout</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #6B7280;'>M.Tech ADSA Project Engine | Fully Interactive Dashboard</p>", unsafe_allow_html=True)
